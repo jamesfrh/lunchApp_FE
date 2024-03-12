@@ -1,6 +1,6 @@
 # LunchDecisionApp
 
-## SCREENSHOTS
+## Screenshots
 __Screenshots of the front end pages can be found in src/assets/images of the Angular Repository for reference__
 
 ## Assumptions
