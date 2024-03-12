@@ -1,5 +1,31 @@
 # LunchDecisionApp
 
+### Assumptions
+Some assumptions were made to facilitate the development of the application.
+1. Assuming the current data is non-sensitive/non restricted, no password is required for the login
+2. Each user can only initate one session. They cannot create multiple sessions.
+3. When a session is initiated by a user, the backend sends an email notifcation to all users about the new session code. 
+4. Users are not restricted to the number of submissions per session, they may submit as many as they want.
+5. Users can join multiple sessions and make submissions in the session joined.
+6. Assuming the data is non-sensitive/non restricted, no password is required for the login.
+
+###Features
+1. A user can initiate a session and invite others to join it.
+2. Other users who have joined the session may submit a restaurant of their choice.
+3. All users in the session are able to see restaurants that others have submitted.
+4. Only the user who initiated the session is able to end the session.
+5. At the end of a session, a restaurant is randomly picked from all submitted
+restaurants. All users in the session are then able to see the picked
+restaurant by searching for the session code.
+6. A user should not be able to join a session that has already ended.
+
+#Future releases that can be considered for automatic deployment and scalability
+1. Dockerize the application by creating an image
+2. Pushing the image to AWS ECR and then deploying on ECS fargate
+3. Use RDS mysql
+4. Create a pipeline on AWS which handles the automatic deployment of codes from codeCommit -> codebuild -> codedeply -> ECR -> ECS
+
+
 ### Prerequisites
 1. 3 User accounts have been created in the backend. Use these email address to login. You may create more accounts in UserConfiguration.java file in the Springboot app.
     1. james@tech.gov.sg
@@ -10,12 +36,9 @@
 3. Mailtrap is used to test the sending of emails by the Springboot application when a user session is initiated to notify all other users about the session code.
    Steps to login to Mailtrap:
    1. Login to https://mailtrap.io/ using the google account (email: lunchapp.springboot@gmail.com, password: lunchap2024)
-   2. Once Logged in, navigate to Email Testing -> My Inbox. In My Inbox, you may view the emails that is being sent from the Springboot application.
+   2. Once Logged in, navigate to Email Testing -> My Inbox. In My Inbox.
+   You may view the emails that are being sent from the Springboot application when a user has created a new session, sending out the session code to all other users in the     database.
    
-
-
-
-
 
 
 ### Installation
@@ -47,4 +70,10 @@ Once the cloning process is complete, follow these steps to import the project i
 After importing the project, you can run the Spring Boot application:
 1.Locate the main class with the main method (usually annotated with @SpringBootApplication).
 2.Right-click on the main class and select "Run As" > "Spring Boot App."
+
+#Future releases that can be considered for automatic deployment and scalability
+1. Dockerize the application by creating an image
+2. Pushing the image to AWS ECR and then deploying on ECS fargate
+3. Use RDS mysql
+4. Create a pipeline on AWS which handles the automatic deployment of codes from codeCommit -> codebuild -> codedeply -> ECR -> ECS
 
