@@ -19,7 +19,8 @@ restaurants. All users in the session are then able to see the picked
 restaurant by searching for the session code.
 6. A user should not be able to join a session that has already ended.
 
-
+##SCREENSHOTS
+__Screenshots of the front end pages can be found in src/assets/images of the Angular Repository for reference__
 
 ### Prerequisites
 1. 3 User accounts have been created in the backend. Use these email address to login. You may create more accounts in UserConfiguration.java file in the Springboot app.
