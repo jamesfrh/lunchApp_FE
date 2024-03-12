@@ -1,7 +1,29 @@
 # LunchDecisionApp
 
-### Installation
+### Prerequisites
+1. 3 User accounts have been created in the backend. Use these email address to login. You may create more accounts in UserConfiguration.java file in the Springboot app.
+    1. james@tech.gov.sg
+    2. bob@tech.gov.sg
+    3. jane@tech.gov.sg
+2. MySQL has been configured as the database in the Springboot application. In the Springboot application.properties, change the username and password to your own credentials if it is not the same.
+   Create a schema called lunchapp in the database before starting the Springboot application.
+3. Mailtrap is used to test the sending of emails by the Springboot application when a user session is initiated to notify all other users about the session code.
+   Steps to login to Mailtrap:
+   1. Login to https://mailtrap.io/ using the google account (email: lunchapp.springboot@gmail.com, password: lunchap2024)
+   2. Once Logged in, navigate to Email Testing -> My Inbox. In My Inbox, you may view the emails that is being sent from the Springboot application.
+   
 
+
+
+
+
+
+### Installation
+Clone the project and change into the project directory
+1. cd to \lunch_app\app-frontend
+2. run <npm install>
+4. run <ng serve> to start the front end application
+5. On the browser, go to http://localhost:4200 to start using the application
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
 
