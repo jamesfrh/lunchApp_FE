@@ -19,11 +19,16 @@
 
 
 ### Installation
+##Frontend Setup for Angular
 Clone the project and change into the project directory
 1. cd to \lunch_app\app-frontend
 2. run <npm install>
 4. run <ng serve> to start the front end application
 5. On the browser, go to http://localhost:4200 to start using the application
+
+##Backend Setup for SpringBoot
+
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
 
