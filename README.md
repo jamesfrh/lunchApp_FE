@@ -24,8 +24,8 @@ This Angular application was developed in Visual Studio Code, Angular version 16
 
 Clone the project and change into the project directory : URL to clone: https://github.com/jamesfrh/lunchApp_FE.git
 1. cd to \lunch_app\app-frontend
-2. run <npm install>
-4. run <ng serve> to start the front end application
+2. run "npm install"
+4. run "ng serve" to start the front end application
 5. On the browser, go to http://localhost:4200 to start using the application
 
 ##Backend Setup for SpringBoot
@@ -48,28 +48,3 @@ After importing the project, you can run the Spring Boot application:
 1.Locate the main class with the main method (usually annotated with @SpringBootApplication).
 2.Right-click on the main class and select "Run As" > "Spring Boot App."
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
