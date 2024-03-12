@@ -13,6 +13,8 @@ export class RestaurantSubmissionComponent implements OnInit,OnDestroy {
   restaurantName: string = '';
   submittedRestaurants: Restaurant[] = [];
   submittedRestaurantsSubscription!: Subscription;
+  submitSuccessMessage: boolean = false;
+  submitErrorMessage: string = '';
 
   username: string | null = localStorage.getItem('username');
   sessionCode: string | null = localStorage.getItem('sessionCode');
@@ -26,7 +28,7 @@ export class RestaurantSubmissionComponent implements OnInit,OnDestroy {
 
   }
   ngOnInit(): void {
-    const sessionCode = this.sessionService.getSessionCode();
+    const sessionCode = localStorage.getItem('sessionCode');
     if(sessionCode){
       console.log("in session")
       this.submittedRestaurantsSubscription = this.restaurantService.getSubmittedRestaurantList(sessionCode)
@@ -44,33 +46,39 @@ export class RestaurantSubmissionComponent implements OnInit,OnDestroy {
 
   submitRestaurant() {
     const username = this.getUsername();
-    const sessionCode = this.sessionService.getSessionCode();
-  
+    const sessionCode = localStorage.getItem("sessionCode");
+    console.log("username" + username)
+    console.log("sessionCode" + sessionCode)
+
     if (username && sessionCode) {
       this.restaurantService.submitRestaurant(username, sessionCode, this.restaurantName).subscribe(
         (response: any) => {
           console.log('Response from backend submitRestaurant:', response);
-  
+          this.submitSuccessMessage =true;
+          this.submitErrorMessage = '';
           this.restaurantService.getSubmittedRestaurantList(sessionCode).subscribe(
             (restaurants: Restaurant[]) => {
               this.submittedRestaurants = restaurants;
-              alert('Restaurant submitted successfully.');
             },
             (error: any) => {
+              this.submitErrorMessage = 'Failed to fetch updated restaurant list'
+              this.submitSuccessMessage = false;
               console.error('Error fetching updated restaurant list:', error);
-              alert('Failed to fetch updated restaurant list.');
             }
           );
         },
         (error: any) => {
-          console.error('Error submitting restaurant:', error);
-  
+          this.submitErrorMessage = 'Error submitting restaurant:' + error;
+          this.submitSuccessMessage = false;
+
           if (error.status === 409) {
             // Conflict: Restaurant with the same name already exists in this session
-            alert('Restaurant with the same name already exists in this session.');
+            this.submitErrorMessage = 'Restaurant with the same name already exists in this session.';
+            this.submitSuccessMessage = false;
+
           } else {
-            // Other errors
-            alert('Failed to submit restaurant. Check session status and try again.');
+            this.submitSuccessMessage = false;
+            this.submitErrorMessage = 'Failed to submit restaurant. Check session status and try again.';
           }
         }
       );

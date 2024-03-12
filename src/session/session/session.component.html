@@ -1,33 +1,32 @@
-<!-- session.component.html -->
-
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-4">
       <h2>Session</h2>
       <div class="form-group">
         <label for="sessionCode">Session Code:</label>
-        <input type="number" class="form-control" id="sessionCode" [(ngModel)]="sessionCode" />
+        <input type="number" class="form-control" id="sessionCode" [(ngModel)]="sessionCode" placeholder="Enter Session Code" />
       </div>
     </div>
 
     <div class="col-md-4">
-      <!-- Use the 'loading' variable to conditionally disable the button and show loading spinner -->
-      <button class="btn btn-success btn-block mb-2" (click)="searchSession()">
-        Search Session
-      </button>
-
       <button class="btn btn-primary btn-block mb-2" (click)="initiateSession()" [disabled]="loading">
         <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         <span *ngIf="!loading">Initiate Session</span>
       </button>
 
-      <!-- Display session initiation error message -->
       <div *ngIf="isSessionActive && sessionInitiationErrorMessage" class="alert alert-danger mt-2">
         {{ sessionInitiationErrorMessage }}
       </div>
 
       <button class="btn btn-success btn-block mb-2" (click)="joinSession()">Join Session</button>
+        <div *ngIf="sessionJoinErrorMessage" class="alert alert-danger">
+          {{ sessionJoinErrorMessage }}
+        </div>
+
       <button class="btn btn-danger btn-block" (click)="endSession()">End Session</button>
+      <div *ngIf="sessionEndErrorMessage" class="alert alert-danger">
+        {{ sessionEndErrorMessage }}
+      </div>
     </div>
 
     <div class="col-md-4">
@@ -41,20 +40,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Display session details -->
-  <div *ngIf="sessionDetails" class="mt-4">
-    <h2>Session Details:</h2>
-    <p class="alert alert-success">
-      Session Code: {{ sessionDetails.sessionCode }} <br>
-      Selected Restaurant: {{ sessionDetails.selectedRestaurant }} <br>
-      Created By: {{ sessionDetails.username }} <br>
-      Created Date: {{ sessionDetails.startTime | date: 'medium' }} <br>
-      End Date: {{ sessionDetails.endTime | date: 'medium' }}
-    </p>
-  </div>
-
-  <!-- Display random session code -->
   <div *ngIf="selectedRestaurant" class="mt-4">
     <h2>Session Details:</h2>
     <p *ngIf="!isSessionActive" class="alert alert-success">

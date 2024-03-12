@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { SessionComponent } from '../session/session/session.component';
 import { RestaurantSubmissionComponent } from '../restaurant/restaurant-submission/restaurant-submission.component';
+import { SearchSessionComponent } from 'src/session/search-session/search-session.component';
 import { LoginComponent } from '../login/login.component'; 
 import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: 'session', component: SessionComponent, canActivate: [AuthGuard] },
   { path: 'restaurant-submission', component: RestaurantSubmissionComponent, canActivate: [AuthGuard] },
+  { path: 'search-session', component: SearchSessionComponent, canActivate: [AuthGuard] },
+
   { path: 'login', component: LoginComponent }, 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];

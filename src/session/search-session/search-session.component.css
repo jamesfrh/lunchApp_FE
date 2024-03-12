@@ -1,0 +1,12 @@
+.session-details {
+    border: 1px solid #28a745; 
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #dff0d8; 
+  }
+  
+  .selected-restaurant {
+    color: #d9534f; 
+    font-weight: bold;
+  }
+  

@@ -11,13 +11,16 @@ import { SessionDetail } from 'src/models/session-details.model';
   styleUrls: ['./session.component.css'],
 })
 export class SessionComponent implements OnInit {
-  sessionCode: number = 0;
+  sessionCode: number | null = null;
   isSessionCodeInvalid: boolean = false;
   isSessionActive: boolean = false;
   username: string | null = localStorage.getItem('username');
   sessionCodeErrorMessage: string = 'Invalid Session Code.';
   sessionInitiationErrorMessage: string = '';
   sessionActiveMessage: string = '';
+  sessionJoinErrorMessage: string = '';
+  sessionEndErrorMessage: string = '';
+  sessionEndSuccessMessage: boolean = false;
   selectedRestaurant: string | null = null;
   loading: boolean = false;
   sessionDetails!: SessionDetail;
@@ -33,7 +36,7 @@ export class SessionComponent implements OnInit {
     if (this.isSessionActive) {
       console.log('printing active mssg');
       this.sessionActiveMessage =
-        'You have an active session code: ' + this.sessionCode.toString();
+        'You have an active session code: ' + this.sessionCode!.toString();
     }
     const storedSessionCode = localStorage.getItem('sessionCode');
     if (storedSessionCode !== null) {
@@ -68,172 +71,132 @@ export class SessionComponent implements OnInit {
     return localStorage.getItem('username');
   }
 
-  initiateSession() {
+  async initiateSession() {
     if (this.isSessionActive) {
       this.sessionInitiationErrorMessage =
         'You have an active session code: ' +
-        this.sessionCode.toString() +
+        this.sessionCode!.toString() +
         '. Please end the current session before starting a new one';
       return;
     }
+
     const username = this.getUsername();
+
     if (username) {
       this.spinner.show();
       this.loading = true;
-      // Call the backend service to initiate the session and get the generated session code
-      this.sessionService
-        .initiateSession(username)
-        .subscribe(
-          (response: any) => {
-            console.log('Response from backend initiateSession:', response);
-            // Assuming the backend returns the generated session code
-            const generatedSessionCode = response.generatedSessionCode;
-            this.sessionService.setSessionCode(generatedSessionCode);
 
-            // Update the session code in the session service
-            // this.sessionService.setSessionCode(generatedSessionCode);
-            this.router.navigate(['/restaurant-submission']);
-          },
-          (error) => {
-            console.error('Error initiating session:', error);
-          }
-        )
-        .add(() => {
-          this.spinner.hide();
-          this.loading = false;
-        });
+      try {
+        const response: any = await this.sessionService.initiateSession(username).toPromise();
+
+        console.log('Response from backend initiateSession:', response);
+
+        const generatedSessionCode = response.generatedSessionCode;
+        this.sessionService.setSessionCode(generatedSessionCode);
+
+        this.router.navigate(['/restaurant-submission']);
+      } catch (error) {
+        console.error('Error initiating session:', error);
+      } finally {
+        this.spinner.hide();
+        this.loading = false;
+      }
     } else {
       alert('Username not found in localStorage. Please log in first.');
     }
   }
-  checkActiveSession() {
+  async checkActiveSession() {
     console.log('checking if active');
     const username = this.getUsername();
+
     if (username) {
-      this.sessionService.checkActiveSession(username).subscribe(
-        (response: any) => {
-          if (response.hasActiveSession) {
-            this.isSessionActive = true;
-          } else {
-            console.log('No active session.');
-            this.isSessionActive = false;
-          }
-        },
-        (error) => {
-          console.error('Error checking active session:', error);
+      try {
+        const response: any = await this.sessionService.checkActiveSession(username).toPromise();
+
+        if (response.hasActiveSession) {
+          this.isSessionActive = true;
+        } else {
+          console.log('No active session.');
+          this.isSessionActive = false;
         }
-      );
+      } catch (error) {
+        console.error('Error checking active session:', error);
+      }
     } else {
       alert('Username not found in localStorage. Please log in first.');
     }
   }
-  searchSession() {
-    this.sessionService.getSessionDetails(this.sessionCode).subscribe(
-      (response: any) => {
-        if (response.sessionDetails) {
-          this.sessionDetails = response.sessionDetails
-          console.log('Session details:');
-          console.log(this.sessionDetails);
-        } else {
-          console.log('No session found for the provided session code.');
-        }
-      },
-      (error) => {
-        // Handle errors from the backend service
-        console.error('Error getting session details:', error);
-      }
-    );
-  }
-  joinSession() {
+  async joinSession() {
+    localStorage.setItem("sessionCode", this.sessionCode!.toString()) 
+    this.sessionJoinErrorMessage = '';
+    
     if (this.username) {
-      if (this.isSessionActive === false) {
-        this.sessionService
-          .joinSession(this.username, this.sessionCode)
-          .subscribe(
-            (response: any) => {
-              console.log('Response from backend joinSession:', response);
-              if (
-                response &&
-                response.message === 'Successfully joined the session'
-              ) {
-                localStorage.setItem(
-                  'sessionCode',
-                  this.sessionCode.toString()
-                );
-                this.router.navigate(['/restaurant-submission']);
-              } else {
-                // Session code is invalid, handle accordingly (e.g., display an error)
-                console.error(
-                  'Invalid session code or unable to join the session.'
-                );
-                alert('Invalid session code or unable to join the session.');
-              }
-            },
-            (error: any) => {
-              console.error('Error joining session:', error);
-              // Handle the error, e.g., display a message to the user
-              alert(
-                'Failed to join session. Check session code and try again.'
-              );
-            }
-          );
-      } else {
-        this.sessionService
-          .checkActiveSessionWithSessionCode(
-            this.username,
-            this.sessionCode.toString()
-          )
-          .subscribe((response: any) => {
-            console.log('active session same user');
-
-            console.log(response);
-            if (response && response.message === 'Active session found.') {
-              // Session is active, handle accordingly
-              console.log('Active session.');
-              this.router.navigate(['/restaurant-submission']);
-            } else {
-              // Session is not active, handle accordingly
-              console.log('Inactive session.');
-              alert(
-                'Failed to join session. Check session code and try again.'
-              );
-            }
-          });
+      try {
+        // if (this.isSessionActive === false) {
+          const response: any = await this.sessionService.joinSession(this.username, this.sessionCode!).toPromise();
+  
+          console.log('Response from backend joinSession:', response);
+  
+          if (response && response.message === 'Successfully joined the session') {
+            localStorage.setItem('sessionCode', this.sessionCode!.toString());
+            this.router.navigate(['/restaurant-submission']);
+          } else {
+            console.error('Invalid session code or unable to join the session.');
+            this.sessionJoinErrorMessage = 'Invalid session code or unable to join the session.';
+          }
+        // } else {
+        //   console.log('in else');
+        //   const response: any = await this.sessionService.checkActiveSessionWithSessionCode(
+        //     this.username,
+        //     this.sessionCode.toString()
+        //   ).toPromise();
+  
+        //   console.log('active session same user', response);
+  
+        //   if (response && response.message === 'Active session found.') {
+        //     console.log('Active session.');
+        //     this.router.navigate(['/restaurant-submission']);
+        //   } else {
+        //     console.log('Inactive session.');
+        //     this.sessionJoinErrorMessage = 'Failed to join session. Check session code and try again.';
+        //   }
+        // }
+      } catch (error) {
+        console.error('Error joining session:', error);
+        this.sessionJoinErrorMessage = 'Failed to join session. Check session code and try again.';
       }
     } else {
-      alert('Username not found. Please log in first.');
+      this.sessionJoinErrorMessage = 'Username not found. Please log in first.';
     }
   }
-  endSession() {
+  
+  async endSession() {
+    this.sessionEndSuccessMessage = false;
+    this.sessionEndErrorMessage = '';
+  
     const username = this.getUsername();
     const sessionCode = this.sessionCode;
-
+  
     if (username && sessionCode) {
-      this.sessionService.endSession(username, sessionCode).subscribe(
-        (response: any) => {
-          if (
-            response &&
-            response.message === 'Successfully ended the session.'
-          ) {
-            // Session ended successfully
-            this.isSessionActive = false;
-            this.selectedRestaurant = response.selectedRestaurant;
-            this.sessionCode = response.sessionCode;
-            localStorage.removeItem('sessionCode');
-          } else {
-            console.error('Error ending session:', response.error);
-            alert('Failed to end session. Check session code and try again.');
-          }
-        },
-        (error: any) => {
-          console.error('Error ending session:', error);
-          alert('Unable to end session');
+      try {
+        const response: any = await this.sessionService.endSession(username, sessionCode).toPromise();
+  
+        if (response && response.message === 'Successfully ended the session.') {
+          this.sessionEndSuccessMessage = true;
+          this.isSessionActive = false;
+          this.selectedRestaurant = response.selectedRestaurant;
+          this.sessionCode = response.sessionCode;
+          localStorage.removeItem('sessionCode');
+        } else {
+          console.error('Error ending session:', response.error);
+          this.sessionEndErrorMessage = 'Failed to end session. Check session code and try again.';
         }
-      );
+      } catch (error) {
+        console.error('Error ending session:', error);
+        this.sessionEndErrorMessage = 'Unable to end session';
+      }
     } else {
-      alert(
-        'Username or session code not found. Please log in and provide a session code.'
-      );
+      this.sessionEndErrorMessage = 'Username or session code not found. Please log in and provide a session code.';
     }
   }
 }
